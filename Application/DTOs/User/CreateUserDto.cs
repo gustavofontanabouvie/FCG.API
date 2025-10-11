@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fcg.Application.DTOs;
+namespace Fcg.Application.DTOs.User;
 
 public record CreateUserDto
     ([Required] string name,

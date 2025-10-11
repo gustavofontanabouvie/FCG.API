@@ -1,4 +1,4 @@
-﻿using Fcg.Application.DTOs;
+﻿using Fcg.Application.DTOs.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;

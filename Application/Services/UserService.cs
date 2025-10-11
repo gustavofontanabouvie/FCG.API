@@ -1,4 +1,4 @@
-﻿using Fcg.Application.DTOs;
+﻿using Fcg.Application.DTOs.User;
 using Fcg.Application.Interfaces;
 using Fcg.Data.Repositories.Interface;
 using Fcg.Domain;
