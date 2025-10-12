@@ -2,6 +2,7 @@
 using Fcg.Application.Interfaces;
 using Fcg.Data.Repositories.Interface;
 using Fcg.Domain;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,5 +42,12 @@ public class GameService : IGameService
         }
 
         return null;
+    }
+
+    public async Task<ActionResult<IEnumerable<ResponseGameDto>>> GetAllGamesWithPromotion(CancellationToken cancellationToken)
+    {
+        var response = await _gameRepository.GetAllGamesWithPromotion(cancellationToken);
+
+        return response;
     }
 }

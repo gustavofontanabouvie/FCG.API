@@ -2,6 +2,7 @@
 using Fcg.Application.Interfaces;
 using Fcg.Data.Repositories.Interface;
 using Fcg.Domain;
+using Fcg.Shared;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System;
 using System.Collections.Generic;
@@ -43,4 +44,5 @@ public class UserService : IUserService
 
         return null;
     }
+
 }

@@ -8,3 +8,5 @@ namespace Fcg.Application.DTOs.User;
 
 public record ResponseUserDto(string name, string email);
 
+public record UserLoginRequest(string email, string senha);
+

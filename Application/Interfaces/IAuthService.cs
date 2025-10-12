@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Fcg.Application.Interfaces;
 
-public interface IUserService
+public interface IAuthService
 {
-    public Task<ResponseUserDto> CreateUser(CreateUserDto createUserDto, CancellationToken cancellationToken);
+    public Task<UserLoginResponseDto> LoginUser(UserLoginRequest loginRequest, CancellationToken cancellationToken);
 }

@@ -17,6 +17,25 @@ public class GameRepository : IGameRepository
         return game;
     }
 
+    public async Task<IEnumerable<Game>> GetAllGamesWithPromotion(CancellationToken cancellationToken)
+    {
+        //    return await fcgdbcontext.games
+        //        .AsNoTracking()
+        //        .Include(game => game.promotion)
+        //        .Select(game => new Game
+        //        {
+        //            id = game.id,
+        //            genre = game.genre,
+        //            name = game.name,
+        //            price = game.price,
+        //            releasedate = game.releasedate,
+        //            promotion = game.promotion
+        //        })
+        //        .Where(game => game.Promotion.IsActive == true)
+        //        .tolistAsync();
+        return null;
+    }
+
     public bool IsGameRegistered(string name, CancellationToken cancellationToken)
     {
         //return await fcgDbContext.Games.AsNoTracking()

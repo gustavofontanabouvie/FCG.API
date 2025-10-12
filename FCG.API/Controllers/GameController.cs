@@ -31,4 +31,10 @@ public class GameController : ControllerBase
         return CreatedAtAction("GetGame", new { name = response.name }, response);
     }
 
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<ResponseGameDto>>> GetAllGamesWithPromotion(CancellationToken cancellationToken)
+    {
+        return await _gameService.GetAllGamesWithPromotion(cancellationToken);
+    }
+
 }

@@ -22,6 +22,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Application\Fcg.Application.csproj" />
 		<ProjectReference Include="..\Fcg.Data\Fcg.Data.csproj" />
+		<ProjectReference Include="..\Fcg.Shared\Fcg.Shared.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,6 +1,8 @@
 ﻿using Fcg.Application.DTOs.User;
 using Fcg.Application.Interfaces;
 using Fcg.Data.Context;
+using Fcg.Shared;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 

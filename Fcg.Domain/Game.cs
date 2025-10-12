@@ -17,7 +17,6 @@ public class Game
     public string Name { get; set; } = string.Empty;
 
     public string Genre { get; set; } = string.Empty;
-    //No futuro categoria deverá ser uma classe
     public DateTime ReleaseDate { get; set; }
 
     public decimal Price { get; set; }
