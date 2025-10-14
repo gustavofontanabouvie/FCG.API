@@ -11,5 +11,6 @@ public interface IUnityOfWork
     IRepository<User> Users { get; }
     IRepository<Game> Games { get; }
     IRepository<Promotion> Promotions { get; }
+    IGameRepository GamesCustom { get; }
     Task<int> SaveChangesAsync();
 }

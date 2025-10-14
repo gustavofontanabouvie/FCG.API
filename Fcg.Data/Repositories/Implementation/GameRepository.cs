@@ -11,6 +11,13 @@ namespace Fcg.Data.Repositories.Implementation;
 
 public class GameRepository : IGameRepository
 {
+    private FcgDbContext dbContext;
+
+    public GameRepository(FcgDbContext dbContext)
+    {
+        this.dbContext = dbContext;
+    }
+
     public async Task<Game> CreateGame(Game game, CancellationToken cancellationToken)
     {
         //await fcgDbContext.Games.AddAsync(game);

@@ -13,11 +13,11 @@ namespace Fcg.Application.Services;
 
 public class GameService : IGameService
 {
-    private readonly IGameRepository _gameRepository;
+    private readonly IUnityOfWork _unityOfWork;
 
-    public GameService(IGameRepository gameRepository)
+    public GameService(IUnityOfWork unityOfWork)
     {
-        _gameRepository = gameRepository;
+        _unityOfWork = unityOfWork;
     }
 
     public async Task<ResponseGameDto> CreateGame(CreateGameDto createGameDto, CancellationToken cancellationToken)
@@ -30,11 +30,11 @@ public class GameService : IGameService
             ReleaseDate = createGameDto.releaseDate
         };
 
-        bool isGameRegistered = _gameRepository.IsGameRegistered(game.Name, cancellationToken);
+        bool isGameRegistered = _unityOfWork.GamesCustom.IsGameRegistered(game.Name, cancellationToken);
 
         if (!isGameRegistered)
         {
-            var response = await _gameRepository.CreateGame(game, cancellationToken);
+            var response = await _unityOfWork.GamesCustom.CreateGame(game, cancellationToken);
 
             var responseDto = new ResponseGameDto(response.Name, response.Genre, response.ReleaseDate, response.Price);
 
@@ -46,8 +46,9 @@ public class GameService : IGameService
 
     public async Task<ActionResult<IEnumerable<ResponseGameDto>>> GetAllGamesWithPromotion(CancellationToken cancellationToken)
     {
-        var response = await _gameRepository.GetAllGamesWithPromotion(cancellationToken);
+        var response = await _unityOfWork.GamesCustom.GetAllGamesWithPromotion(cancellationToken);
 
-        return response;
+        //return response;
+        return null;
     }
 }

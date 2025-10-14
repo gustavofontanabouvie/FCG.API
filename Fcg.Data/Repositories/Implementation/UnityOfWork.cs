@@ -14,10 +14,10 @@ namespace Fcg.Data.Repositories.Implementation
     {
         private readonly FcgDbContext _dbContext;
 
-        private readonly IRepository<User>? _users;
-        private readonly IRepository<Game>? _games;
-        private readonly IRepository<Promotion>? _promotions;
-
+        private IRepository<User>? _users;
+        private IRepository<Game>? _games;
+        private IRepository<Promotion>? _promotions;
+        private IGameRepository _gamesCustom;
 
         public UnityOfWork(FcgDbContext dbContext)
         {
@@ -25,14 +25,18 @@ namespace Fcg.Data.Repositories.Implementation
         }
 
         public IRepository<User> Users => _users ??= new Repository<User>(_dbContext);
-
         public IRepository<Game> Games => _games ??= new Repository<Game>(_dbContext);
         public IRepository<Promotion> Promotions => _promotions ??= new Repository<Promotion>(_dbContext);
-
+        public IGameRepository GamesCustom => _gamesCustom ??= new GameRepository(_dbContext);
 
         public async Task<int> SaveChangesAsync()
         {
             return await _dbContext.SaveChangesAsync();
+        }
+
+        public void Dispose()
+        {
+            _dbContext.Dispose();
         }
     }
 }

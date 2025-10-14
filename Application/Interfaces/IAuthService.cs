@@ -10,5 +10,5 @@ namespace Fcg.Application.Interfaces;
 
 public interface IAuthService
 {
-    public Task<UserLoginResponseDto> LoginUser(UserLoginRequest loginRequest, CancellationToken cancellationToken);
+    //public Task<UserLoginResponseDto> LoginUser(UserLoginRequest loginRequest, CancellationToken cancellationToken);
 }

@@ -1,8 +1,10 @@
 using Fcg.Application.Interfaces;
 using Fcg.Application.Services;
+using Fcg.Data.Context;
 using Fcg.Data.Repositories.Implementation;
 using Fcg.Data.Repositories.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -10,6 +12,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.AddDbContext<FcgDbContext>
+    (options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")).EnableSensitiveDataLogging();
+    options.EnableDetailedErrors();
+});
 // Add services to the container.
 
 #region "DI"
