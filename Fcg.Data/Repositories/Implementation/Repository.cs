@@ -19,7 +19,7 @@ public class Repository<T> : IRepository<T> where T : class
         _dbContext = dbContext;
         _dbSet = _dbContext.Set<T>();
     }
-    public async virtual Task<T> AddAsync(T entity)
+    public async virtual Task<T> AddAsync(T entity, CancellationToken cancellationToken)
     {
         await _dbSet.AddAsync(entity);
         return entity;
@@ -31,7 +31,7 @@ public class Repository<T> : IRepository<T> where T : class
         return Task.CompletedTask;
     }
 
-    public virtual async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+    public virtual async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)
     {
         return await _dbSet.AnyAsync(predicate);
     }
@@ -46,7 +46,7 @@ public class Repository<T> : IRepository<T> where T : class
         return await _dbSet.ToListAsync();
     }
 
-    public virtual async Task<T?> GetByIdAsync(int id)
+    public virtual async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         return await _dbSet.FindAsync(id);
     }

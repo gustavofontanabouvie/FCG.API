@@ -2,6 +2,8 @@
 using Fcg.Application.Interfaces;
 using Fcg.Data.Repositories.Interface;
 using Fcg.Domain;
+using Fcg.Domain.Common;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -20,8 +22,15 @@ public class GameService : IGameService
         _unityOfWork = unityOfWork;
     }
 
-    public async Task<ResponseGameDto> CreateGame(CreateGameDto createGameDto, CancellationToken cancellationToken)
+    public async Task<Result<ResponseGameDto>> CreateGame(CreateGameDto createGameDto, CancellationToken cancellationToken)
     {
+        bool isGameRegistered = await _unityOfWork.Games.ExistsAsync(g => g.Name == createGameDto.name, cancellationToken);
+
+        if (isGameRegistered)
+        {
+            return Result<ResponseGameDto>.Failure("A game with this name already exists");
+        }
+
         var game = new Game
         {
             Name = createGameDto.name,
@@ -30,25 +39,34 @@ public class GameService : IGameService
             ReleaseDate = createGameDto.releaseDate
         };
 
-        bool isGameRegistered = _unityOfWork.GamesCustom.IsGameRegistered(game.Name, cancellationToken);
+        var response = await _unityOfWork.GamesCustom.CreateGame(game, cancellationToken);
 
-        if (!isGameRegistered)
-        {
-            var response = await _unityOfWork.GamesCustom.CreateGame(game, cancellationToken);
+        var responseDto = new ResponseGameDto(response.Id, response.Name, response.Genre, response.ReleaseDate, response.Price, response.Promotions);
 
-            var responseDto = new ResponseGameDto(response.Name, response.Genre, response.ReleaseDate, response.Price);
-
-            return responseDto;
-        }
-
-        return null;
+        return Result<ResponseGameDto>.Success(responseDto);
     }
 
-    public async Task<ActionResult<IEnumerable<ResponseGameDto>>> GetAllGamesWithPromotion(CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<ResponseGameDto>>> GetAllGamesWithPromotion(CancellationToken cancellationToken)
     {
-        var response = await _unityOfWork.GamesCustom.GetAllGamesWithPromotion(cancellationToken);
+        var gamesWithPromo = await _unityOfWork.GamesCustom.GetAllGamesWithPromotion(cancellationToken);
 
-        //return response;
-        return null;
+        if (gamesWithPromo is null)
+            return Result<IEnumerable<ResponseGameDto>>.Failure("No games with promotion");
+
+        var responseDtos = gamesWithPromo.Select(game => new ResponseGameDto(game.Id, game.Name, game.Genre, game.ReleaseDate, game.Price, game.Promotions)).ToList();
+
+        return Result<IEnumerable<ResponseGameDto>>.Success(responseDtos);
+    }
+
+    public async Task<Result<ResponseGameDto>> GetGameById(int id, CancellationToken cancellationToken)
+    {
+        var game = await _unityOfWork.Games.GetByIdAsync(id, cancellationToken);
+
+        if (game is null)
+            return Result<ResponseGameDto>.Failure("Game is not registered");
+
+        ResponseGameDto gameDto = new ResponseGameDto(game.Id, game.Name, game.Genre, game.ReleaseDate, game.Price, game.Promotions);
+
+        return Result<ResponseGameDto>.Success(gameDto);
     }
 }

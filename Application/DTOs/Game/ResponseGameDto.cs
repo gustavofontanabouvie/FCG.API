@@ -7,4 +7,4 @@ using System.Threading.Tasks;
 
 namespace Fcg.Application.DTOs.Game;
 
-public record ResponseGameDto(string name, string genre, DateTime releaseDate, decimal price);
+public record ResponseGameDto(int id, string name, string genre, DateTime releaseDate, decimal price, IEnumerable<Promotion> promotions);

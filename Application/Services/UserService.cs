@@ -2,6 +2,7 @@
 using Fcg.Application.Interfaces;
 using Fcg.Data.Repositories.Interface;
 using Fcg.Domain;
+using Fcg.Domain.Common;
 using Fcg.Shared;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System;
@@ -14,35 +15,49 @@ namespace Fcg.Application.Services;
 
 public class UserService : IUserService
 {
-    private readonly IUserRepository _userRepository;
+    private readonly IUnityOfWork _unityOfWork;
 
-    public UserService(IUserRepository userRepository)
+    public UserService(IUnityOfWork unityOfWork)
     {
-        _userRepository = userRepository;
+        _unityOfWork = unityOfWork;
     }
 
-    public async Task<ResponseUserDto> CreateUser(CreateUserDto createUserDto, CancellationToken cancellationToken)
+    public async Task<Result<ResponseUserDto>> CreateUser(CreateUserDto createUserDto, CancellationToken cancellationToken)
     {
+        bool isUserRegistered = await _unityOfWork.Users.ExistsAsync(u => u.Email == createUserDto.email, cancellationToken);
+
+        if (isUserRegistered)
+        {
+            return Result<ResponseUserDto>.Failure("E-mail already in use");
+        }
+
         var user = new User
         {
             Email = createUserDto.email,
             Name = createUserDto.name,
             Password = createUserDto.password,
-            Role = (UserRole)1
+            Role = UserRole.User
         };
 
-        bool isUserRegistered = _userRepository.IsUserRegistered(user.Email, cancellationToken);
+        await _unityOfWork.Users.AddAsync(user, cancellationToken);
 
-        if (!isUserRegistered)
-        {
-            await _userRepository.CreateUser(user, cancellationToken);
+        await _unityOfWork.SaveChangesAsync();
 
-            var responseDto = new ResponseUserDto(user.Name, user.Email);
+        var responseDto = new ResponseUserDto(user.Id, user.Name, user.Email);
 
-            return responseDto;
-        }
+        return Result<ResponseUserDto>.Success(responseDto);
 
-        return null;
     }
 
+    public async Task<Result<ResponseUserDto>> GetUserById(int id, CancellationToken cancellationToken)
+    {
+        var user = await _unityOfWork.Users.GetByIdAsync(id, cancellationToken);
+
+        if (user is null)
+            return Result<ResponseUserDto>.Failure("User is not registered");
+
+        ResponseUserDto response = new ResponseUserDto(user.Id, user.Name, user.Email);
+
+        return Result<ResponseUserDto>.Success(response);
+    }
 }

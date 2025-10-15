@@ -1,6 +1,8 @@
 ﻿using Fcg.Data.Context;
 using Fcg.Data.Repositories.Interface;
 using Fcg.Domain;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,42 +13,28 @@ namespace Fcg.Data.Repositories.Implementation;
 
 public class GameRepository : IGameRepository
 {
-    private FcgDbContext dbContext;
+    private readonly FcgDbContext _dbContext;
 
     public GameRepository(FcgDbContext dbContext)
     {
-        this.dbContext = dbContext;
+        this._dbContext = dbContext;
     }
 
     public async Task<Game> CreateGame(Game game, CancellationToken cancellationToken)
     {
-        //await fcgDbContext.Games.AddAsync(game);
+        await _dbContext.Games.AddAsync(game);
+        await _dbContext.SaveChangesAsync();
+
         return game;
     }
 
     public async Task<IEnumerable<Game>> GetAllGamesWithPromotion(CancellationToken cancellationToken)
     {
-        //    return await fcgdbcontext.games
-        //        .AsNoTracking()
-        //        .Include(game => game.promotion)
-        //        .Select(game => new Game
-        //        {
-        //            id = game.id,
-        //            genre = game.genre,
-        //            name = game.name,
-        //            price = game.price,
-        //            releasedate = game.releasedate,
-        //            promotion = game.promotion
-        //        })
-        //        .Where(game => game.Promotion.IsActive == true)
-        //        .tolistAsync();
-        return null;
+        return await _dbContext.Games
+            .AsNoTracking()
+            .Include(game => game.Promotions)
+            .Where(game => game.Promotions.Any())
+            .ToListAsync(cancellationToken);
     }
 
-    public bool IsGameRegistered(string name, CancellationToken cancellationToken)
-    {
-        //return await fcgDbContext.Games.AsNoTracking()
-        //        .AnyAsync(game => game.Name.Equals(name));
-        return true;
-    }
 }
