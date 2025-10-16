@@ -61,7 +61,7 @@ public class GameService : IGameService
 
     public async Task<Result<ResponseGameDto>> GetGameById(int id, CancellationToken cancellationToken)
     {
-        var game = await _unityOfWork.Games.GetByIdAsync(id, cancellationToken);
+        var game = await _unityOfWork.GamesCustom.GetGameById(id, cancellationToken);
 
         if (game is null)
             return Result<ResponseGameDto>.Failure("Game is not registered");

@@ -37,4 +37,11 @@ public class GameRepository : IGameRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<Game?> GetGameById(int id, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Games
+            .AsNoTracking()
+            .Include(g => g.Promotions)
+            .FirstOrDefaultAsync(g => g.Id == id, cancellationToken);
+    }
 }

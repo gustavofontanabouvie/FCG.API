@@ -11,4 +11,5 @@ public interface IGameRepository
 {
     public Task<Game> CreateGame(Game game, CancellationToken cancellationToken);
     public Task<IEnumerable<Game>> GetAllGamesWithPromotion(CancellationToken cancellationToken);
+    public Task<Game?> GetGameById(int id, CancellationToken cancellationToken);
 }
