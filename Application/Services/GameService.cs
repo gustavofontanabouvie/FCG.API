@@ -3,6 +3,7 @@ using Fcg.Application.Interfaces;
 using Fcg.Data.Repositories.Interface;
 using Fcg.Domain;
 using Fcg.Domain.Common;
+using Fcg.Shared;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -22,13 +23,13 @@ public class GameService : IGameService
         _unityOfWork = unityOfWork;
     }
 
-    public async Task<Result<ResponseGameDto>> CreateGame(CreateGameDto createGameDto, CancellationToken cancellationToken)
+    public async Task<Result<CreateGameResponseDto>> CreateGame(CreateGameDto createGameDto, CancellationToken cancellationToken)
     {
         bool isGameRegistered = await _unityOfWork.Games.ExistsAsync(g => g.Name == createGameDto.name, cancellationToken);
 
         if (isGameRegistered)
         {
-            return Result<ResponseGameDto>.Failure("A game with this name already exists");
+            return Result<CreateGameResponseDto>.Failure("A game with this name already exists");
         }
 
         var game = new Game
@@ -41,9 +42,9 @@ public class GameService : IGameService
 
         var response = await _unityOfWork.GamesCustom.CreateGame(game, cancellationToken);
 
-        var responseDto = new ResponseGameDto(response.Id, response.Name, response.Genre, response.ReleaseDate, response.Price, response.Promotions);
+        var responseDto = new CreateGameResponseDto(response.Id, response.Name, response.Genre, response.ReleaseDate, response.Price);
 
-        return Result<ResponseGameDto>.Success(responseDto);
+        return Result<CreateGameResponseDto>.Success(responseDto);
     }
 
     public async Task<Result<IEnumerable<ResponseGameDto>>> GetAllGamesWithPromotion(CancellationToken cancellationToken)
@@ -53,7 +54,7 @@ public class GameService : IGameService
         if (gamesWithPromo is null)
             return Result<IEnumerable<ResponseGameDto>>.Failure("No games with promotion");
 
-        var responseDtos = gamesWithPromo.Select(game => new ResponseGameDto(game.Id, game.Name, game.Genre, game.ReleaseDate, game.Price, game.Promotions)).ToList();
+        var responseDtos = gamesWithPromo.Select(game => new ResponseGameDto(game.Id, game.Name, game.Genre, game.ReleaseDate, game.Price, game.Promotions.Select(promo => new PromotionDto(promo.Id, promo.Name, promo.DiscountPercentage)).ToList()));
 
         return Result<IEnumerable<ResponseGameDto>>.Success(responseDtos);
     }
@@ -65,7 +66,7 @@ public class GameService : IGameService
         if (game is null)
             return Result<ResponseGameDto>.Failure("Game is not registered");
 
-        ResponseGameDto gameDto = new ResponseGameDto(game.Id, game.Name, game.Genre, game.ReleaseDate, game.Price, game.Promotions);
+        ResponseGameDto gameDto = new ResponseGameDto(game.Id, game.Name, game.Genre, game.ReleaseDate, game.Price, game.Promotions.Select(promo => new PromotionDto(promo.Id, promo.Name, promo.DiscountPercentage)).ToList());
 
         return Result<ResponseGameDto>.Success(gameDto);
     }

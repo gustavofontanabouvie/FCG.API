@@ -10,6 +10,8 @@ namespace Fcg.Domain;
 
 public class Game
 {
+    private ICollection<Promotion> promotions;
+
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }

@@ -46,13 +46,17 @@ public class GameController : ControllerBase
         return CreatedAtAction("GetGameById", new { id = result.Value.id }, result.Value);
     }
 
-    [HttpGet]
+
+    [SwaggerOperation(Summary = "Get all games with active promotions", Description = "Retrieves a list of all games that currently have one or more active promotions")]
+    [SwaggerResponse(200, "A list of games with promotions was returned successfully", typeof(IEnumerable<ResponseGameDto>))]
+    [SwaggerResponse(204, "No games with promotions were found")]
+    [HttpGet("with-promotion")]
     public async Task<ActionResult<IEnumerable<ResponseGameDto>>> GetAllGamesWithPromotion(CancellationToken cancellationToken)
     {
         var result = await _gameService.GetAllGamesWithPromotion(cancellationToken);
 
-        if (!result.IsSuccess)
-            return NotFound();
+        if (!result.Value.Any())
+            return NoContent();
 
         return Ok(result.Value);
     }
