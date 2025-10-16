@@ -34,14 +34,14 @@ public class GameController : ControllerBase
 
     [SwaggerOperation(Summary = "Create a new Game", Description = "This endpoint receive a game data and persist in database")]
     [SwaggerResponse(201, "Game created successfuly", typeof(ResponseGameDto))]
-    [SwaggerResponse(422, "That Game has already been registered")]
+    [SwaggerResponse(409, "That Game has already been registered")]
     [HttpPost]
     public async Task<ActionResult<ResponseGameDto>> PostGame([FromBody] CreateGameDto createGameDto, CancellationToken cancellationToken)
     {
         var result = await _gameService.CreateGame(createGameDto, cancellationToken);
 
         if (!result.IsSuccess)
-            return UnprocessableEntity(new { error = result.Error });
+            return Conflict(new { error = result.Error });
 
         return CreatedAtAction("GetGameById", new { id = result.Value.id }, result.Value);
     }

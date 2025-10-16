@@ -41,7 +41,7 @@ public class UserService : IUserService
 
         await _unityOfWork.Users.AddAsync(user, cancellationToken);
 
-        await _unityOfWork.SaveChangesAsync();
+        await _unityOfWork.CompleteAsync(cancellationToken);
 
         var responseDto = new ResponseUserDto(user.Id, user.Name, user.Email);
 

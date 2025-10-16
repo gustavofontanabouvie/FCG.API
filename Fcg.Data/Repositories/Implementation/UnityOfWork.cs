@@ -29,14 +29,14 @@ namespace Fcg.Data.Repositories.Implementation
         public IRepository<Promotion> Promotions => _promotions ??= new Repository<Promotion>(_dbContext);
         public IGameRepository GamesCustom => _gamesCustom ??= new GameRepository(_dbContext);
 
-        public async Task<int> SaveChangesAsync()
-        {
-            return await _dbContext.SaveChangesAsync();
-        }
-
         public void Dispose()
         {
             _dbContext.Dispose();
+        }
+
+        public async Task<int> CompleteAsync(CancellationToken cancellationToken)
+        {
+            return await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

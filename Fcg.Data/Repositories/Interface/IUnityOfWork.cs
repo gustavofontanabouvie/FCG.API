@@ -12,5 +12,5 @@ public interface IUnityOfWork
     IRepository<Game> Games { get; }
     IRepository<Promotion> Promotions { get; }
     IGameRepository GamesCustom { get; }
-    Task<int> SaveChangesAsync();
+    Task<int> CompleteAsync(CancellationToken cancellationToken);
 }

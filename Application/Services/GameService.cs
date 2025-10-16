@@ -25,7 +25,7 @@ public class GameService : IGameService
 
     public async Task<Result<CreateGameResponseDto>> CreateGame(CreateGameDto createGameDto, CancellationToken cancellationToken)
     {
-        bool isGameRegistered = await _unityOfWork.Games.ExistsAsync(g => g.Name == createGameDto.name, cancellationToken);
+        bool isGameRegistered = await _unityOfWork.Games.ExistsAsync(g => g.Name.Equals(createGameDto.name), cancellationToken);
 
         if (isGameRegistered)
         {

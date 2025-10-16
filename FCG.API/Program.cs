@@ -26,6 +26,7 @@ builder.Services.AddScoped<IUnityOfWork, UnityOfWork>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IPromotionService, PromotionService>();
 
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 #endregion
