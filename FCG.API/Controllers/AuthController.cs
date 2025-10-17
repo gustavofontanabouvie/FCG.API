@@ -1,7 +1,7 @@
-﻿using Fcg.Application.DTOs.User;
+﻿using Fcg.Application.DTOs.Auth;
 using Fcg.Application.Interfaces;
+using Fcg.Domain.Common;
 using Fcg.Shared;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FCG.API.Controllers;
@@ -18,11 +18,14 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<UserLoginResponseDto> LoginUser([FromBody] UserLoginRequest loginRequest, CancellationToken cancellationToken)
+    public async Task<ActionResult<TokenDto>> LoginUser([FromBody] LoginRequest loginRequest, CancellationToken cancellationToken)
     {
-        //var loginResponse = await _authService.LoginUser(loginRequest, cancellationToken);
+        var result = await _authService.LoginUser(loginRequest, cancellationToken);
 
-        //return loginResponse;
-        return null;
+        if (!result.IsSuccess)
+            return Unauthorized("Email or password is invalid");
+
+        return Ok(new { Token = result });
+
     }
 }

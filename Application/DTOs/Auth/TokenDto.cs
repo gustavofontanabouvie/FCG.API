@@ -4,6 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fcg.Shared;
+namespace Fcg.Application.DTOs.Auth;
 
-public record UserLoginResponseDto(string email, string token);
+public record TokenDto(string token);

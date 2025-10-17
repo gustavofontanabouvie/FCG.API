@@ -31,6 +31,7 @@ builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 #endregion
 
+var jwt = builder.Configuration["Jwt:Key"];
 
 builder.Services.AddAuthentication(options =>
 {
@@ -40,14 +41,15 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters()
     {
-        ValidateIssuer = false,
-        ValidateAudience = false,
+        ValidateIssuer = true,
+        ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("3e2acfc238f45g314f15424dse5267sad30bd1774743a15dwc5c53ac71ca494b"))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt))
     };
 });
 
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -88,6 +90,7 @@ builder.Services.AddSwaggerGen(
     }
     );
 
+
 var app = builder.Build();
 
 
@@ -100,6 +103,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
