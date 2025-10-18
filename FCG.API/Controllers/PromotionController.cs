@@ -3,6 +3,7 @@ using Fcg.Application.DTOs.Promotion;
 using Fcg.Application.Interfaces;
 using Fcg.Application.Services;
 using Fcg.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -23,6 +24,7 @@ namespace FCG.API.Controllers
         [SwaggerResponse(200, "Promotion found and returned", typeof(PromotionDto))]
         [SwaggerResponse(404, "Promotion with that ID was not found")]
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<PromotionDto>> GetPromotionById(int id, CancellationToken cancellationToken)
         {
             var result = await _promotionService.GetPromotionById(id, cancellationToken);
@@ -38,6 +40,7 @@ namespace FCG.API.Controllers
         [SwaggerResponse(409, "A promotion with the same name already exists.")]
         [SwaggerResponse(422, "The specified game ID does not exist.")]
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<PromotionDto>> PostPromotion([FromBody] CreatePromotionDto createPromotionDto, CancellationToken cancellationToken)
 
         {

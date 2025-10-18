@@ -2,6 +2,7 @@
 using Fcg.Application.Interfaces;
 using Fcg.Data.Context;
 using Fcg.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -23,6 +24,7 @@ public class UserController : ControllerBase
     [SwaggerResponse(200, "User found and returned", typeof(ResponseUserDto))]
     [SwaggerResponse(404, "User with that ID was not found")]
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<ActionResult<ResponseUserDto>> GetUserById(int id, CancellationToken cancellationToken)
     {
         var result = await _userService.GetUserById(id, cancellationToken);

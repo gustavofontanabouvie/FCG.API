@@ -1,6 +1,7 @@
 ﻿using Fcg.Application.DTOs.Game;
 using Fcg.Application.DTOs.User;
 using Fcg.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -22,6 +23,7 @@ public class GameController : ControllerBase
     [SwaggerResponse(200, "Game found and returned", typeof(ResponseGameDto))]
     [SwaggerResponse(404, "Game with that ID was not found")]
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<ActionResult<ResponseGameDto>> GetGameById(int id, CancellationToken cancellationToken)
     {
         var result = await _gameService.GetGameById(id, cancellationToken);
@@ -36,6 +38,7 @@ public class GameController : ControllerBase
     [SwaggerResponse(201, "Game created successfuly", typeof(ResponseGameDto))]
     [SwaggerResponse(409, "That Game has already been registered")]
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ResponseGameDto>> PostGame([FromBody] CreateGameDto createGameDto, CancellationToken cancellationToken)
     {
         var result = await _gameService.CreateGame(createGameDto, cancellationToken);
