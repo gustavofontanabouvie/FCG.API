@@ -1,4 +1,5 @@
-﻿using Fcg.Application.DTOs.User;
+﻿using BCrypt.Net;
+using Fcg.Application.DTOs.User;
 using Fcg.Application.Interfaces;
 using Fcg.Data.Repositories.Interface;
 using Fcg.Domain;
@@ -31,11 +32,13 @@ public class UserService : IUserService
             return Result<ResponseUserDto>.Failure("E-mail already in use");
         }
 
+        string hashPassword = BCrypt.Net.BCrypt.HashPassword(createUserDto.password, 12);
+
         var user = new User
         {
             Email = createUserDto.email,
             Name = createUserDto.name,
-            Password = createUserDto.password,
+            Password = hashPassword,
             Role = UserRole.User
         };
 

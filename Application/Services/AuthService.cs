@@ -15,6 +15,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using BCrypt.Net;
 
 namespace Fcg.Application.Services;
 
@@ -39,8 +40,9 @@ public class AuthService : IAuthService
         if (user == null)
             return Result<TokenDto>.Failure("Invalid e-mail or password");
 
+        bool verifyPassword = BCrypt.Net.BCrypt.Verify(loginRequest.password, user.Password);
 
-        if (!user.Password.Equals(loginRequest.password))
+        if (!verifyPassword)
             return Result<TokenDto>.Failure("Invalid e-mail or password");
 
         var finalToken = GenerateJwtToken(user.Id, user.Email, user.Role.ToString());
