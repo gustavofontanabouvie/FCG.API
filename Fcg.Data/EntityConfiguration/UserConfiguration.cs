@@ -16,12 +16,14 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.Email).HasColumnType("varchar(200)");
         builder.Property(u => u.Name).HasColumnType("varchar(200)");
         builder.Property(u => u.Password).HasColumnType("varchar(200)");
+
         builder.HasData(new User
         {
             Id = 1,
-            Email = "user@user.com",
-            Password = "user",
-            Name = "user",
+            Email = "admin@user.com",
+            //User@1234
+            Password = "$2a$12$4v7rJsBJeZZ.Zivh/iTab.SGuxcNFWOOzKqZ34scDghOlmw3ImV3S",
+            Name = "admin",
             Role = UserRole.Admin
         });
     }

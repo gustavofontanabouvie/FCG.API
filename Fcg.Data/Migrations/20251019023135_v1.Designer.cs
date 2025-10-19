@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Fcg.Data.Migrations
 {
     [DbContext(typeof(FcgDbContext))]
-    [Migration("20251014014927_v1")]
+    [Migration("20251019023135_v1")]
     partial class v1
     {
         /// <inheritdoc />
@@ -58,7 +58,7 @@ namespace Fcg.Data.Migrations
                             Genre = "Aventura",
                             Name = "Jogo teste",
                             Price = 99.99m,
-                            ReleaseDate = new DateTime(2025, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            ReleaseDate = new DateTime(2025, 10, 10, 3, 0, 0, 0, DateTimeKind.Utc)
                         });
                 });
 
@@ -100,11 +100,11 @@ namespace Fcg.Data.Migrations
                         {
                             Id = 1,
                             DiscountPercentage = 10m,
-                            EndDate = new DateTime(2025, 10, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2025, 10, 13, 3, 0, 0, 0, DateTimeKind.Utc),
                             GameId = 1,
                             IsActive = true,
                             Name = "Promoção dia das crianças",
-                            StartDate = new DateTime(2025, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartDate = new DateTime(2025, 10, 10, 3, 0, 0, 0, DateTimeKind.Utc)
                         });
                 });
 
@@ -168,9 +168,9 @@ namespace Fcg.Data.Migrations
                         new
                         {
                             Id = 1,
-                            Email = "user@user.com",
-                            Name = "user",
-                            Password = "user",
+                            Email = "admin@user.com",
+                            Name = "admin",
+                            Password = "User@1234",
                             Role = 0
                         });
                 });

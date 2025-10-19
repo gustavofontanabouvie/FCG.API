@@ -97,17 +97,17 @@ namespace Fcg.Data.Migrations
             migrationBuilder.InsertData(
                 table: "Games",
                 columns: new[] { "Id", "Genre", "Name", "Price", "ReleaseDate" },
-                values: new object[] { 1, "Aventura", "Jogo teste", 99.99m, new DateTime(2025, 10, 10, 0, 0, 0, 0, DateTimeKind.Utc) });
+                values: new object[] { 1, "Aventura", "Jogo teste", 99.99m, new DateTime(2025, 10, 10, 3, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "Name", "Password", "Role" },
-                values: new object[] { 1, "user@user.com", "user", "user", 0 });
+                values: new object[] { 1, "admin@user.com", "admin", "User@1234", 0 });
 
             migrationBuilder.InsertData(
                 table: "Promotions",
                 columns: new[] { "Id", "DiscountPercentage", "EndDate", "GameId", "IsActive", "Name", "StartDate" },
-                values: new object[] { 1, 10m, new DateTime(2025, 10, 13, 0, 0, 0, 0, DateTimeKind.Utc), 1, true, "Promoção dia das crianças", new DateTime(2025, 10, 10, 0, 0, 0, 0, DateTimeKind.Utc) });
+                values: new object[] { 1, 10m, new DateTime(2025, 10, 13, 3, 0, 0, 0, DateTimeKind.Utc), 1, true, "Promoção dia das crianças", new DateTime(2025, 10, 10, 3, 0, 0, 0, DateTimeKind.Utc) });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Promotions_GameId",

@@ -23,6 +23,34 @@ public class UserService : IUserService
         _unityOfWork = unityOfWork;
     }
 
+    public async Task<Result<ResponseUserDto>> CreateAdminUser(CreateUserDto createUserDto, CancellationToken cancellationToken)
+    {
+        bool isUserRegistered = await _unityOfWork.Users.ExistsAsync(u => u.Email == createUserDto.email, cancellationToken);
+
+        if (isUserRegistered)
+        {
+            return Result<ResponseUserDto>.Failure("E-mail already in use");
+        }
+
+        string hashPassword = BCrypt.Net.BCrypt.HashPassword(createUserDto.password, 12);
+
+        var user = new User
+        {
+            Email = createUserDto.email,
+            Name = createUserDto.name,
+            Password = hashPassword,
+            Role = UserRole.Admin
+        };
+
+        await _unityOfWork.Users.AddAsync(user, cancellationToken);
+
+        await _unityOfWork.CompleteAsync(cancellationToken);
+
+        var responseDto = new ResponseUserDto(user.Id, user.Name, user.Email);
+
+        return Result<ResponseUserDto>.Success(responseDto);
+    }
+
     public async Task<Result<ResponseUserDto>> CreateUser(CreateUserDto createUserDto, CancellationToken cancellationToken)
     {
         bool isUserRegistered = await _unityOfWork.Users.ExistsAsync(u => u.Email == createUserDto.email, cancellationToken);

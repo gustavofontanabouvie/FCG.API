@@ -26,4 +26,8 @@
 		<ProjectReference Include="..\Fcg.Domain\Fcg.Domain.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Migrations\" />
+	</ItemGroup>
+
 </Project>

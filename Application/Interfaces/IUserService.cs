@@ -12,6 +12,7 @@ namespace Fcg.Application.Interfaces;
 
 public interface IUserService
 {
+    public Task<Result<ResponseUserDto>> CreateAdminUser(CreateUserDto createUserDto, CancellationToken cancellationToken);
     public Task<Result<ResponseUserDto>> CreateUser(CreateUserDto createUserDto, CancellationToken cancellationToken);
     public Task<Result<ResponseUserDto>> GetUserById(int id, CancellationToken cancellationToken);
 }
