@@ -64,4 +64,17 @@ public class GameController : ControllerBase
         return Ok(result.Value);
     }
 
+    //[Authorize(Roles = "Admin")]
+    //[HttpDelete("{id}")]
+    //public async Task<ActionResult<ResponseSimpleGameDto>> DeleteGameById(int id, CancellationToken cancellationToken)
+    //{
+    //    var result = await _gameService.DeleteGameById(id, cancellationToken);
+
+    //    if (!result.IsSuccess)
+    //        return;
+
+
+    //    return
+    //}
+
 }

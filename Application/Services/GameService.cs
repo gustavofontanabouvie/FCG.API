@@ -47,6 +47,17 @@ public class GameService : IGameService
         return Result<CreateGameResponseDto>.Success(responseDto);
     }
 
+    //public async Task<Result<ResponseSimpleGameDto>> DeleteGameById(int id, CancellationToken cancellationToken)
+    //{
+    //    var isGameRegistered = await _unityOfWork.Games.ExistsAsync(g => g.Id == id, cancellationToken);
+
+    //    if (!isGameRegistered)
+    //        return Result<ResponseSimpleGameDto>.Failure("Game is not registered");
+
+
+    //    await _unityOfWork.Games.DeleteAsync();
+    //}
+
     public async Task<Result<IEnumerable<ResponseGameDto>>> GetAllGamesWithPromotion(CancellationToken cancellationToken)
     {
         var gamesWithPromo = await _unityOfWork.GamesCustom.GetAllGamesWithPromotion(cancellationToken);
