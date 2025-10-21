@@ -55,7 +55,7 @@ public class FcgDbContext : DbContext
             .HasMany(g => g.Promotions)
             .WithOne(p => p.Game)
             .HasForeignKey(p => p.GameId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
 
     }
     public DbSet<User> Users { get; set; }
