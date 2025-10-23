@@ -1,4 +1,6 @@
-﻿public class ExceptionMiddleware
+﻿namespace Fcg.API;
+
+public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionMiddleware> _logger;

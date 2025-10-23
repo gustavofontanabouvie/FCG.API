@@ -4,13 +4,7 @@ using Fcg.Data.Repositories.Interface;
 using Fcg.Domain;
 using Fcg.Domain.Common;
 using Fcg.Shared;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Fcg.Application.Services;
 
