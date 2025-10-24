@@ -10,4 +10,5 @@ public interface IGameService
     public Task<Result<ResponseSimpleGameDto>> DeleteGameById(int id, CancellationToken cancellationToken);
     public Task<Result<IEnumerable<ResponseGameDto>>> GetAllGamesWithPromotion(CancellationToken cancellationToken);
     public Task<Result<ResponseGameDto>> GetGameById(int id, CancellationToken cancellationToken);
+    public Task<Result<ResponseGameDto>> UpdateGameById(int id, UpdateGameDto updateGameDto, CancellationToken cancellationToken);
 }

@@ -79,4 +79,31 @@ public class GameService : IGameService
 
         return Result<ResponseGameDto>.Success(gameDto);
     }
+
+    public async Task<Result<ResponseGameDto>> UpdateGameById(int id, UpdateGameDto updateGameDto, CancellationToken cancellationToken)
+    {
+        var game = await _unityOfWork.Games.GetByIdAsync(id, cancellationToken);
+
+        if (game is null)
+            return Result<ResponseGameDto>.Failure("Game is not registered");
+
+        //if (updateGameDto.name is not null && updateGameDto.name != game.Name)
+        game.Name = updateGameDto.name;
+
+        //if (updateGameDto.genre is not null && updateGameDto.genre != game.Genre)
+        game.Genre = updateGameDto.genre;
+
+        //if (updateGameDto.releaseDate != default && updateGameDto.releaseDate != game.ReleaseDate)
+        game.ReleaseDate = updateGameDto.releaseDate;
+
+        //if (updateGameDto.price != default && updateGameDto.price != game.Price)
+        game.Price = updateGameDto.price;
+
+        await _unityOfWork.Games.UpdateAsync(game);
+        await _unityOfWork.CompleteAsync(cancellationToken);
+
+        ResponseGameDto gameDto = new ResponseGameDto(game.Id, game.Name, game.Genre, game.ReleaseDate, game.Price, game.Promotions.Select(promo => new PromotionDto(promo.Id, promo.Name, promo.DiscountPercentage)).ToList());
+
+        return Result<ResponseGameDto>.Success(gameDto);
+    }
 }

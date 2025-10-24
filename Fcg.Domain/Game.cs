@@ -23,6 +23,6 @@ public class Game
 
     public decimal Price { get; set; }
 
-    public virtual ICollection<Promotion> Promotions { get; set; }
+    public virtual ICollection<Promotion> Promotions { get; set; } = new List<Promotion>();
 
 }

@@ -64,4 +64,6 @@ public class UserController : ControllerBase
 
         return CreatedAtAction("GetUserById", new { id = result.Value.id }, result.Value);
     }
+
+    [HttpPut("{id}")]
 }

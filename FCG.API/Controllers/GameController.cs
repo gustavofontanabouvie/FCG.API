@@ -59,17 +59,35 @@ public class GameController : ControllerBase
         var result = await _gameService.GetAllGamesWithPromotion(cancellationToken);
 
         if (!result.Value.Any())
-            return NoContent();
+            return NoContent(); s
 
         return Ok(result.Value);
     }
 
+
+    [SwaggerOperation(Summary = "Delete a game by ID", Description = "Delete the data of a game and yours promotions")]
+    [SwaggerResponse(404, "Game with that ID was not found")]
+    [SwaggerResponse(204, "The game was deleted with success")]
     [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteGameById(int id, CancellationToken cancellationToken)
     {
         var result = await _gameService.DeleteGameById(id, cancellationToken);
 
+        if (!result.IsSuccess)
+            return NotFound(new { error = result.Error });
+
+        return NoContent();
+    }
+
+    [SwaggerOperation(Summary = "Update a game by ID", Description = "Update the data of a specific game based on their ID")]
+    [SwaggerResponse(204, "Game updated successfully", typeof(ResponseGameDto))]
+    [SwaggerResponse(404, "Game with that ID was not found")]
+    [Authorize(Roles = "Admin")]
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ResponseGameDto>> UpdateGameById(int id, [FromBody] UpdateGameDto updateGameDto, CancellationToken cancellationToken)
+    {
+        var result = await _gameService.UpdateGameById(id, updateGameDto, cancellationToken);
         if (!result.IsSuccess)
             return NotFound(new { error = result.Error });
 
