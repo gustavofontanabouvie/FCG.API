@@ -91,4 +91,28 @@ public class UserService : IUserService
 
         return Result<ResponseUserDto>.Success(response);
     }
+
+    public Task<Result<ResponseUserDto>> UpdateUser(int id, UpdateUserDto updateDto, CancellationToken cancellationToken)
+    {
+        var user = _unityOfWork.Users.GetByIdAsync(id, cancellationToken);
+
+        if (user is null)
+            return Task.FromResult(Result<ResponseUserDto>.Failure("User is not registered"));
+
+        if (updateDto.role > 0 && updateDto.role > 1)
+            return Task.FromResult(Result<ResponseUserDto>.Failure("Invalid role"));
+
+
+        user.Result.Name = updateDto.name;
+        user.Result.Email = updateDto.email;
+
+        user.Result.Role = updateDto.role == 0 ? user.Result.Role = UserRole.User : user.Result.Role = UserRole.Admin;
+
+        _unityOfWork.Users.UpdateAsync(user.Result);
+        _unityOfWork.CompleteAsync(cancellationToken);
+
+        ResponseUserDto response = new ResponseUserDto(user.Result.Id, user.Result.Name, user.Result.Email);
+        return Task.FromResult(Result<ResponseUserDto>.Success(response));
+
+    }
 }

@@ -15,4 +15,5 @@ public interface IUserService
     public Task<Result<ResponseUserDto>> CreateAdminUser(CreateUserDto createUserDto, CancellationToken cancellationToken);
     public Task<Result<ResponseUserDto>> CreateUser(CreateUserDto createUserDto, CancellationToken cancellationToken);
     public Task<Result<ResponseUserDto>> GetUserById(int id, CancellationToken cancellationToken);
+    public Task<Result<ResponseUserDto>> UpdateUser(int id, UpdateUserDto updateDto, CancellationToken cancellationToken);
 }

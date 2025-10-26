@@ -59,7 +59,7 @@ public class GameController : ControllerBase
         var result = await _gameService.GetAllGamesWithPromotion(cancellationToken);
 
         if (!result.Value.Any())
-            return NoContent(); s
+            return NoContent();
 
         return Ok(result.Value);
     }
