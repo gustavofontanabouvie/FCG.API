@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
-using Xunit;
+﻿using Moq;
 using Fcg.Domain;
 using Fcg.Application.Services;
 using Fcg.Data.Repositories.Interface;
-using Castle.Core.Configuration;
 using System.Linq.Expressions;
 using Fcg.Application.DTOs.User;
 using FluentAssertions;

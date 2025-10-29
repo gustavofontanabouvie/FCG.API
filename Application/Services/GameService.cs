@@ -14,6 +14,11 @@ public class GameService : IGameService
     private readonly IUnityOfWork _unityOfWork;
     private readonly ILogger<GameService> _logger;
 
+    public GameService(IUnityOfWork unityOfWork)
+    {
+        _unityOfWork = unityOfWork;
+    }
+
     public GameService(IUnityOfWork unityOfWork, ILogger<GameService> logger)
     {
         _unityOfWork = unityOfWork;
@@ -22,7 +27,6 @@ public class GameService : IGameService
 
     public async Task<Result<CreateGameResponseDto>> CreateGame(CreateGameDto createGameDto, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Creating a new game {createGameDto}");
 
         bool isGameRegistered = await _unityOfWork.Games.ExistsAsync(g => g.Name.Equals(createGameDto.name), cancellationToken);
 
@@ -43,8 +47,6 @@ public class GameService : IGameService
         var response = await _unityOfWork.GamesCustom.CreateGame(game, cancellationToken);
 
         var responseDto = new CreateGameResponseDto(response.Id, response.Name, response.Genre, response.ReleaseDate, response.Price);
-
-        _logger.LogInformation($"Game created successfully: {responseDto}");
 
         return Result<CreateGameResponseDto>.Success(responseDto);
     }
