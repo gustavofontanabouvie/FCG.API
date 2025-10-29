@@ -66,6 +66,8 @@ public class AuthenticationTest
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().NotBeNull();
         result.Error.Should().BeNull();
+
+
     }
 
     [Fact]

@@ -51,7 +51,7 @@ public class Repository<T> : IRepository<T> where T : class
         return await _dbSet.FindAsync(id);
     }
 
-    public virtual Task UpdateAsync(T entity)
+    public virtual Task UpdateAsync(T entity, CancellationToken cancellationToken)
     {
         _dbSet.Update(entity);
         return Task.CompletedTask;

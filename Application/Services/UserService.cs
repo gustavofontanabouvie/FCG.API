@@ -92,27 +92,38 @@ public class UserService : IUserService
         return Result<ResponseUserDto>.Success(response);
     }
 
-    public Task<Result<ResponseUserDto>> UpdateUser(int id, UpdateUserDto updateDto, CancellationToken cancellationToken)
+    public async Task<Result<ResponseUserDto>> UpdateUser(int id, UpdateUserDto updateDto, CancellationToken cancellationToken)
     {
-        var user = _unityOfWork.Users.GetByIdAsync(id, cancellationToken);
+        var user = await _unityOfWork.Users.GetByIdAsync(id, cancellationToken);
 
         if (user is null)
-            return Task.FromResult(Result<ResponseUserDto>.Failure("User is not registered"));
+            return Result<ResponseUserDto>.Failure("User is not registered");
 
-        if (updateDto.role > 0 && updateDto.role > 1)
-            return Task.FromResult(Result<ResponseUserDto>.Failure("Invalid role"));
+        if (updateDto.name is not null)
+        {
+            user.Name = updateDto.name;
+        }
 
+        if (updateDto.email is not null)
+        {
+            user.Email = updateDto.email;
+        }
 
-        user.Result.Name = updateDto.name;
-        user.Result.Email = updateDto.email;
+        if (updateDto.role is not null)
+        {
+            if (!Enum.IsDefined(typeof(UserRole), updateDto.role))
+            {
+                return Result<ResponseUserDto>.Failure("Invalid role");
+            }
 
-        user.Result.Role = updateDto.role == 0 ? user.Result.Role = UserRole.User : user.Result.Role = UserRole.Admin;
+            user.Role = (UserRole)updateDto.role;
+        }
 
-        _unityOfWork.Users.UpdateAsync(user.Result);
-        _unityOfWork.CompleteAsync(cancellationToken);
+        await _unityOfWork.Users.UpdateAsync(user, cancellationToken);
+        await _unityOfWork.CompleteAsync(cancellationToken);
 
-        ResponseUserDto response = new ResponseUserDto(user.Result.Id, user.Result.Name, user.Result.Email);
-        return Task.FromResult(Result<ResponseUserDto>.Success(response));
+        ResponseUserDto response = new ResponseUserDto(user.Id, user.Name, user.Email);
 
+        return Result<ResponseUserDto>.Success(response);
     }
 }

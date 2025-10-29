@@ -69,7 +69,7 @@ public class UserController : ControllerBase
     [SwaggerResponse(200, "User updated sucessfuly", typeof(ResponseUserDto))]
     [SwaggerResponse(404, "User with that ID was not found")]
     [Authorize(Roles = "Admin")]
-    [HttpPut("{id}")]
+    [HttpPatch("{id}")]
     public async Task<ActionResult<ResponseUserDto>> PutUser(int id, [FromBody] UpdateUserDto updateDto, CancellationToken cancellationToken)
     {
         var result = await _userService.UpdateUser(id, updateDto, cancellationToken);

@@ -4,6 +4,7 @@ using Fcg.Data.Repositories.Interface;
 using Fcg.Domain;
 using Fcg.Domain.Common;
 using Fcg.Shared;
+using Microsoft.Extensions.Logging;
 
 
 namespace Fcg.Application.Services;
@@ -11,18 +12,23 @@ namespace Fcg.Application.Services;
 public class GameService : IGameService
 {
     private readonly IUnityOfWork _unityOfWork;
+    private readonly ILogger<GameService> _logger;
 
-    public GameService(IUnityOfWork unityOfWork)
+    public GameService(IUnityOfWork unityOfWork, ILogger<GameService> logger)
     {
         _unityOfWork = unityOfWork;
+        _logger = logger;
     }
 
     public async Task<Result<CreateGameResponseDto>> CreateGame(CreateGameDto createGameDto, CancellationToken cancellationToken)
     {
+        _logger.LogInformation($"Creating a new game {createGameDto}");
+
         bool isGameRegistered = await _unityOfWork.Games.ExistsAsync(g => g.Name.Equals(createGameDto.name), cancellationToken);
 
         if (isGameRegistered)
         {
+            _logger.LogError($"The game already exists");
             return Result<CreateGameResponseDto>.Failure("A game with this name already exists");
         }
 
@@ -37,6 +43,8 @@ public class GameService : IGameService
         var response = await _unityOfWork.GamesCustom.CreateGame(game, cancellationToken);
 
         var responseDto = new CreateGameResponseDto(response.Id, response.Name, response.Genre, response.ReleaseDate, response.Price);
+
+        _logger.LogInformation($"Game created successfully: {responseDto}");
 
         return Result<CreateGameResponseDto>.Success(responseDto);
     }
@@ -99,7 +107,7 @@ public class GameService : IGameService
         //if (updateGameDto.price != default && updateGameDto.price != game.Price)
         game.Price = updateGameDto.price;
 
-        await _unityOfWork.Games.UpdateAsync(game);
+        await _unityOfWork.Games.UpdateAsync(game, cancellationToken);
         await _unityOfWork.CompleteAsync(cancellationToken);
 
         ResponseGameDto gameDto = new ResponseGameDto(game.Id, game.Name, game.Genre, game.ReleaseDate, game.Price, game.Promotions.Select(promo => new PromotionDto(promo.Id, promo.Name, promo.DiscountPercentage)).ToList());
