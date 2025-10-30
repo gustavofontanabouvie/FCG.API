@@ -25,7 +25,7 @@ public class Repository<T> : IRepository<T> where T : class
         return entity;
     }
 
-    public virtual Task DeleteAsync(T entity)
+    public virtual Task DeleteAsync(T entity, CancellationToken cancellationToken)
     {
         _dbSet.Remove(entity);
         return Task.CompletedTask;

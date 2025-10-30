@@ -58,7 +58,7 @@ public class GameService : IGameService
         if (game is null)
             return Result<ResponseSimpleGameDto>.Failure("Game is not registered");
 
-        await _unityOfWork.Games.DeleteAsync(game);
+        await _unityOfWork.Games.DeleteAsync(game, cancellationToken);
         await _unityOfWork.CompleteAsync(cancellationToken);
 
         var responseDto = new ResponseSimpleGameDto(game.Id, game.Name);

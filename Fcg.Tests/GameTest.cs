@@ -83,5 +83,135 @@ public class GameTest
         result.Error.Should().Be("A game with this name already exists");
 
     }
+
+    [Fact]
+    public async Task DeleteGameById_WithValidId_ShouldDeleteGameSuccessfully()
+    {
+        // Arrange
+        int gameId = 1;
+        var gameToDelete = new Game { Id = gameId, Name = "Game to Delete" };
+
+        _gameRepoMock
+            .Setup(r => r.GetByIdAsync(gameId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(gameToDelete);
+
+        _gameRepoMock
+            .Setup(r => r.DeleteAsync(gameToDelete, It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+
+        _unitOfWorkMock.Setup(u => u.Games).Returns(_gameRepoMock.Object);
+        _unitOfWorkMock.Setup(u => u.CompleteAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
+
+        // Act
+        var result = await _gameService.DeleteGameById(gameId, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
+
+        _gameRepoMock.Verify(
+            repo => repo.DeleteAsync(
+                It.Is<Game>(g => g.Id == gameId),
+                It.IsAny<CancellationToken>()
+            )
+        );
+    }
+
+    [Fact]
+    public async Task DeleteGameById_WithInvalidId_ShouldFailure()
+    {
+        // Arrange
+        int gameId = 1;
+
+        _gameRepoMock
+            .Setup(r => r.GetByIdAsync(gameId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Game?)null);
+
+        _unitOfWorkMock.Setup(u => u.Games).Returns(_gameRepoMock.Object);
+
+        // Act
+        var result = await _gameService.DeleteGameById(gameId, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be("Game is not registered");
+    }
+
+    [Fact]
+    public async Task GetAllGamesWithPromotion_WithGames_ReturnsGamesWithPromotions()
+    {
+        // Arrange
+        var game1 = new Game
+        {
+            Id = 1,
+            Name = "Game1",
+            Genre = "Action",
+            Price = 30m,
+            ReleaseDate = new DateTime(2022, 1, 1),
+            Promotions = new List<Promotion>
+            {
+                new Promotion { Id = 1, Name = "Promo1", DiscountPercentage = 10m }
+            }
+        };
+
+        var game2 = new Game
+        {
+            Id = 2,
+            Name = "Game2",
+            Genre = "Adventure",
+            Price = 60m,
+            ReleaseDate = new DateTime(2021, 6, 1),
+            Promotions = new List<Promotion>
+            {
+                new Promotion { Id = 2, Name = "Promo2", DiscountPercentage = 20m },
+                new Promotion { Id = 3, Name = "Promo3", DiscountPercentage = 5m }
+            }
+        };
+
+        var gamesWithPromo = new List<Game> { game1, game2 };
+
+        _gamesCustomRepoMock
+            .Setup(r => r.GetAllGamesWithPromotion(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(gamesWithPromo);
+
+        // Act
+        var result = await _gameService.GetAllGamesWithPromotion(CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+
+        var returnedGames = result.Value.ToList();
+        returnedGames.Should().HaveCount(2);
+
+        returnedGames[0].id.Should().Be(game1.Id);
+        returnedGames[0].name.Should().Be(game1.Name);
+        returnedGames[0].promotions.Should().HaveCount(1);
+        returnedGames[0].promotions[0].id.Should().Be(game1.Promotions.First().Id);
+
+        returnedGames[1].id.Should().Be(game2.Id);
+        returnedGames[1].promotions.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public async Task GetAllGamesWithPromotion_WhenRepositoryReturnsNull_ShouldReturnFailure()
+    {
+        // Arrange
+        _gamesCustomRepoMock
+            .Setup(r => r.GetAllGamesWithPromotion(It.IsAny<CancellationToken>()))
+            .ReturnsAsync((ICollection<Game>?)null);
+
+        // Act
+        var result = await _gameService.GetAllGamesWithPromotion(CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeFalse();
+        result.Value.Should().BeNull();
+        result.Error.Should().Be("No games with promotion");
+    }
 }
 
