@@ -12,5 +12,7 @@ namespace Fcg.Application.Interfaces;
 public interface IPromotionService
 {
     public Task<Result<PromotionDto>> CreatePromotion(CreatePromotionDto createPromotionDto, CancellationToken cancellationToken);
+    public Task<Result<PromotionDto>> DeletePromotionById(int id, CancellationToken cancellationToken);
     public Task<Result<PromotionDto>> GetPromotionById(int id, CancellationToken cancellationToken);
+    public Task<Result<PromotionUpdateDto>> UpdatePromotion(int id, PromotionUpdateDto promoUpdateDto, CancellationToken cancellationToken);
 }

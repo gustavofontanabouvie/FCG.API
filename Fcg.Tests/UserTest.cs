@@ -15,7 +15,6 @@ public class UserTest
     public UserTest()
     {
         _unitOfWorkMock = new Mock<IUnityOfWork>();
-        _userService = new UserService(_unitOfWorkMock.Object);
     }
 
     [Fact]

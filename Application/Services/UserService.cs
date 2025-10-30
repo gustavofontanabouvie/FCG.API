@@ -6,6 +6,7 @@ using Fcg.Domain;
 using Fcg.Domain.Common;
 using Fcg.Shared;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,11 @@ namespace Fcg.Application.Services;
 public class UserService : IUserService
 {
     private readonly IUnityOfWork _unityOfWork;
+    private readonly ILogger<UserService> _logger;
 
-    public UserService(IUnityOfWork unityOfWork)
+    public UserService(IUnityOfWork unityOfWork, ILogger<UserService> logger)
     {
+        _logger = logger;
         _unityOfWork = unityOfWork;
     }
 
@@ -29,6 +32,7 @@ public class UserService : IUserService
 
         if (isUserRegistered)
         {
+            _logger.LogWarning("Attempt to create an admin user with an already registered email: {Email}", createUserDto.email);
             return Result<ResponseUserDto>.Failure("E-mail already in use");
         }
 
@@ -57,6 +61,7 @@ public class UserService : IUserService
 
         if (isUserRegistered)
         {
+            _logger.LogWarning("E-mail already in use");
             return Result<ResponseUserDto>.Failure("E-mail already in use");
         }
 
@@ -85,7 +90,10 @@ public class UserService : IUserService
         var user = await _unityOfWork.Users.GetByIdAsync(id, cancellationToken);
 
         if (user is null)
+        {
+            _logger.LogWarning("User is not registered");
             return Result<ResponseUserDto>.Failure("User is not registered");
+        }
 
         ResponseUserDto response = new ResponseUserDto(user.Id, user.Name, user.Email);
 
@@ -97,7 +105,10 @@ public class UserService : IUserService
         var user = await _unityOfWork.Users.GetByIdAsync(id, cancellationToken);
 
         if (user is null)
+        {
+            _logger.LogWarning("User is not registered");
             return Result<ResponseUserDto>.Failure("User is not registered");
+        }
 
         if (updateDto.name is not null)
         {
@@ -113,6 +124,7 @@ public class UserService : IUserService
         {
             if (!Enum.IsDefined(typeof(UserRole), updateDto.role))
             {
+                _logger.LogWarning("Invalid role provided: {Role}", updateDto.role);
                 return Result<ResponseUserDto>.Failure("Invalid role");
             }
 

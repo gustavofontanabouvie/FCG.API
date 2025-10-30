@@ -32,7 +32,7 @@ public class GameService : IGameService
 
         if (isGameRegistered)
         {
-            _logger.LogError($"The game already exists");
+            _logger.LogWarning("A game with this name already exists");
             return Result<CreateGameResponseDto>.Failure("A game with this name already exists");
         }
 
@@ -56,7 +56,10 @@ public class GameService : IGameService
         var game = await _unityOfWork.Games.GetByIdAsync(id, cancellationToken);
 
         if (game is null)
+        {
+            _logger.LogWarning("Game is not registered");
             return Result<ResponseSimpleGameDto>.Failure("Game is not registered");
+        }
 
         await _unityOfWork.Games.DeleteAsync(game, cancellationToken);
         await _unityOfWork.CompleteAsync(cancellationToken);
@@ -71,7 +74,10 @@ public class GameService : IGameService
         var gamesWithPromo = await _unityOfWork.GamesCustom.GetAllGamesWithPromotion(cancellationToken);
 
         if (gamesWithPromo is null)
+        {
+            _logger.LogWarning("No games with promotion");
             return Result<IEnumerable<ResponseGameDto>>.Failure("No games with promotion");
+        }
 
         var responseDtos = gamesWithPromo.Select(game => new ResponseGameDto(game.Id, game.Name, game.Genre, game.ReleaseDate, game.Price, game.Promotions.Select(promo => new PromotionDto(promo.Id, promo.Name, promo.DiscountPercentage)).ToList()));
 
@@ -83,7 +89,10 @@ public class GameService : IGameService
         var game = await _unityOfWork.GamesCustom.GetGameById(id, cancellationToken);
 
         if (game is null)
+        {
+            _logger.LogWarning("Game is not registered");
             return Result<ResponseGameDto>.Failure("Game is not registered");
+        }
 
         ResponseGameDto gameDto = new ResponseGameDto(game.Id, game.Name, game.Genre, game.ReleaseDate, game.Price, game.Promotions.Select(promo => new PromotionDto(promo.Id, promo.Name, promo.DiscountPercentage)).ToList());
 
@@ -95,7 +104,10 @@ public class GameService : IGameService
         var game = await _unityOfWork.GamesCustom.GetGameByIdUpdate(id, cancellationToken);
 
         if (game is null)
+        {
+            _logger.LogWarning("Game is not registered");
             return Result<ResponseGameDto>.Failure("Game is not registered");
+        }
 
         if (updateGameDto.name is not null)
             game.Name = updateGameDto.name;
