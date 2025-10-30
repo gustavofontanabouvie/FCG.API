@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Fcg.Application.DTOs.Game;
 
-public record UpdateGameDto(string name, string genre, DateTime releaseDate, decimal price);
+public record UpdateGameDto(string? name, string? genre, DateTime? releaseDate, decimal? price);
 

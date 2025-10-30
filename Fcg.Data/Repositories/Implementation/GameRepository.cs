@@ -44,4 +44,11 @@ public class GameRepository : IGameRepository
             .Include(g => g.Promotions)
             .FirstOrDefaultAsync(g => g.Id == id, cancellationToken);
     }
+
+    public async Task<Game?> GetGameByIdUpdate(int id, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Games
+            .Include(g => g.Promotions)
+            .FirstOrDefaultAsync(g => g.Id == id, cancellationToken);
+    }
 }

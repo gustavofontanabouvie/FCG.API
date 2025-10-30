@@ -92,22 +92,22 @@ public class GameService : IGameService
 
     public async Task<Result<ResponseGameDto>> UpdateGameById(int id, UpdateGameDto updateGameDto, CancellationToken cancellationToken)
     {
-        var game = await _unityOfWork.Games.GetByIdAsync(id, cancellationToken);
+        var game = await _unityOfWork.GamesCustom.GetGameByIdUpdate(id, cancellationToken);
 
         if (game is null)
             return Result<ResponseGameDto>.Failure("Game is not registered");
 
-        //if (updateGameDto.name is not null && updateGameDto.name != game.Name)
-        game.Name = updateGameDto.name;
+        if (updateGameDto.name is not null)
+            game.Name = updateGameDto.name;
 
-        //if (updateGameDto.genre is not null && updateGameDto.genre != game.Genre)
-        game.Genre = updateGameDto.genre;
+        if (updateGameDto.genre is not null)
+            game.Genre = updateGameDto.genre;
 
-        //if (updateGameDto.releaseDate != default && updateGameDto.releaseDate != game.ReleaseDate)
-        game.ReleaseDate = updateGameDto.releaseDate;
+        if (updateGameDto.releaseDate is not null)
+            game.ReleaseDate = updateGameDto.releaseDate.Value;
 
-        //if (updateGameDto.price != default && updateGameDto.price != game.Price)
-        game.Price = updateGameDto.price;
+        if (updateGameDto.price is not null)
+            game.Price = updateGameDto.price.Value;
 
         await _unityOfWork.Games.UpdateAsync(game, cancellationToken);
         await _unityOfWork.CompleteAsync(cancellationToken);

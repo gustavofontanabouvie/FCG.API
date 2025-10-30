@@ -84,7 +84,7 @@ public class GameController : ControllerBase
     [SwaggerResponse(204, "Game updated successfully", typeof(ResponseGameDto))]
     [SwaggerResponse(404, "Game with that ID was not found")]
     [Authorize(Roles = "Admin")]
-    [HttpPut("{id}")]
+    [HttpPatch("{id}")]
     public async Task<ActionResult<ResponseGameDto>> UpdateGameById(int id, [FromBody] UpdateGameDto updateGameDto, CancellationToken cancellationToken)
     {
         var result = await _gameService.UpdateGameById(id, updateGameDto, cancellationToken);

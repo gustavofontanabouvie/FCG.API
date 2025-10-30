@@ -1,5 +1,6 @@
 ﻿using Fcg.Application.DTOs.Game;
 using Fcg.Application.DTOs.User;
+using Fcg.Application.Interfaces;
 using Fcg.Application.Services;
 using Fcg.Data.Repositories.Implementation;
 using Fcg.Data.Repositories.Interface;
@@ -212,6 +213,112 @@ public class GameTest
         result.IsSuccess.Should().BeFalse();
         result.Value.Should().BeNull();
         result.Error.Should().Be("No games with promotion");
+    }
+
+    [Fact]
+    public async Task GetGameById_WithValidId_ShouldReturnGame()
+    {
+        int gameId = 3;
+
+        var expectedGame = new Game
+        {
+            Id = gameId,
+            Name = "Test Game",
+            Genre = "Test Genre",
+            ReleaseDate = new DateTime(2023, 1, 1),
+            Price = 49.99m
+        };
+
+        _gamesCustomRepoMock
+            .Setup(r => r.GetGameById(gameId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedGame);
+
+        //Act
+        var result = await _gameService.GetGameById(gameId, CancellationToken.None);
+
+        //Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value!.id.Should().Be(gameId);
+
+        _gamesCustomRepoMock.Verify(r => r.GetGameById(gameId, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetGameById_WithInvalidId_ShouldReturnFailure()
+    {
+        int gameId = 999;
+
+        _gamesCustomRepoMock
+            .Setup(r => r.GetGameById(gameId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Game?)null);
+
+        //Act
+        var result = await _gameService.GetGameById(gameId, CancellationToken.None);
+
+        //Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Value.Should().BeNull();
+        result.Error.Should().Be("Game is not registered");
+        _gamesCustomRepoMock.Verify(r => r.GetGameById(gameId, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateGameById_WithValidId_ShouldUpdateGameSuccessfully()
+    {
+        // Arrange
+        int gameId = 1;
+
+        var existingGame = new Game { Id = gameId, Name = "Old Game", Genre = "Action", Price = 40m, ReleaseDate = new DateTime(2020, 1, 1) };
+
+        var updateGameDto = new UpdateGameDto("Updated Game", "Adventure", new DateTime(2022, 5, 5), 55m);
+
+        _gamesCustomRepoMock
+            .Setup(r => r.GetGameByIdUpdate(gameId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingGame);
+
+        _unitOfWorkMock.Setup(u => u.GamesCustom).Returns(_gamesCustomRepoMock.Object);
+        _unitOfWorkMock.Setup(u => u.CompleteAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
+
+        // Act
+        var result = await _gameService.UpdateGameById(gameId, updateGameDto, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+
+        result.Value!.name.Should().Be(updateGameDto.name);
+        result.Value!.genre.Should().Be(updateGameDto.genre);
+        result.Value!.price.Should().Be(updateGameDto.price);
+        result.Value!.releaseDate.Should().Be(updateGameDto.releaseDate);
+
+        _gamesCustomRepoMock.Verify(r => r.GetGameByIdUpdate(gameId, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateGameById_WithInvalidId_ShouldReturnFailure()
+    {
+        // Arrange
+        int gameId = 999;
+
+        var updateGameDto = new UpdateGameDto("Updated Game", "Adventure", new DateTime(2022, 5, 5), 55m);
+
+        _gamesCustomRepoMock
+            .Setup(r => r.GetGameByIdUpdate(gameId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Game?)null);
+
+        _unitOfWorkMock.Setup(u => u.GamesCustom).Returns(_gamesCustomRepoMock.Object);
+
+        // Act
+        var result = await _gameService.UpdateGameById(gameId, updateGameDto, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeFalse();
+        result.Value.Should().BeNull();
+        result.Error.Should().Be("Game is not registered");
+        _gamesCustomRepoMock.Verify(r => r.GetGameByIdUpdate(gameId, It.IsAny<CancellationToken>()), Times.Once);
     }
 }
 
