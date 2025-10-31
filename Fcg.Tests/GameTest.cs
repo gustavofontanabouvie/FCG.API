@@ -320,5 +320,34 @@ public class GameTest
         result.Error.Should().Be("Game is not registered");
         _gamesCustomRepoMock.Verify(r => r.GetGameByIdUpdate(gameId, It.IsAny<CancellationToken>()), Times.Once);
     }
-}
 
+    [Fact]
+    public async Task UpdateGameById_WithUsedName_ShouldReturnFailure()
+    {
+        // Arrange
+        int gameId = 1;
+        var existingGame = new Game { Id = gameId, Name = "Old Game", Genre = "Action", Price = 40m, ReleaseDate = new DateTime(2020, 1, 1) };
+        var updateGameDto = new UpdateGameDto("Used Game Name", "Adventure", new DateTime(2022, 5, 5), 55m);
+
+        _gamesCustomRepoMock
+            .Setup(r => r.GetGameByIdUpdate(gameId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(existingGame);
+
+        _gameRepoMock
+            .Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Game, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        _unitOfWorkMock.Setup(u => u.GamesCustom).Returns(_gamesCustomRepoMock.Object);
+        _unitOfWorkMock.Setup(u => u.Games).Returns(_gameRepoMock.Object);
+
+        // Act
+        var result = await _gameService.UpdateGameById(gameId, updateGameDto, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeFalse();
+        result.Value.Should().BeNull();
+        result.Error.Should().Be("A game with this name already exists");
+
+    }
+}

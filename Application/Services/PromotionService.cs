@@ -103,6 +103,15 @@ public class PromotionService : IPromotionService
         var promotion = await _unityOfWork.Promotions.
              GetByIdAsync(id, cancellationToken);
 
+        var existingPromotionWithThatName = await _unityOfWork.Promotions.
+            ExistsAsync((p => p.Name == promoUpdateDto.name), cancellationToken);
+
+        if (existingPromotionWithThatName)
+        {
+            _logger.LogWarning("A promotion with the name {PromotionName} already exists.", promoUpdateDto.name);
+            return Result<PromotionUpdateDto>.Failure("A promotion with this name already exists");
+        }
+
         if (promotion is null)
         {
             _logger.LogWarning("No promotion found with ID {PromotionId} for update.", id);

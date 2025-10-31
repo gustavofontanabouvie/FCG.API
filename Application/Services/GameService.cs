@@ -103,6 +103,14 @@ public class GameService : IGameService
     {
         var game = await _unityOfWork.GamesCustom.GetGameByIdUpdate(id, cancellationToken);
 
+        bool existingGamesWhitThatName = await _unityOfWork.Games.ExistsAsync(g => g.Name.Equals(updateGameDto.name), cancellationToken);
+
+        if (existingGamesWhitThatName)
+        {
+            _logger.LogWarning("A game with this name already exists");
+            return Result<ResponseGameDto>.Failure("A game with this name already exists");
+        }
+
         if (game is null)
         {
             _logger.LogWarning("Game is not registered");
