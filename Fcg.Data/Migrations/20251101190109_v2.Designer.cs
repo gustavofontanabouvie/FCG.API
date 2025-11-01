@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Fcg.Data.Migrations
 {
     [DbContext(typeof(FcgDbContext))]
-    [Migration("20251019024455_v2")]
+    [Migration("20251101190109_v2")]
     partial class v2
     {
         /// <inheritdoc />
@@ -170,7 +170,7 @@ namespace Fcg.Data.Migrations
                             Id = 1,
                             Email = "admin@user.com",
                             Name = "admin",
-                            Password = "$2b$12$qEZ5FkLS2D2DCOAuWJPemOUm8iWvU.SMTFRhJIcHPb.N5OQbnMi3W",
+                            Password = "$2a$12$4v7rJsBJeZZ.Zivh/iTab.SGuxcNFWOOzKqZ34scDghOlmw3ImV3S",
                             Role = 0
                         });
                 });
@@ -180,7 +180,7 @@ namespace Fcg.Data.Migrations
                     b.HasOne("Fcg.Domain.Game", "Game")
                         .WithMany("Promotions")
                         .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Game");

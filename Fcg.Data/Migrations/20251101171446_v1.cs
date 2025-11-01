@@ -64,7 +64,8 @@ namespace Fcg.Data.Migrations
                         name: "FK_Promotions_Games_GameId",
                         column: x => x.GameId,
                         principalTable: "Games",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -102,7 +103,7 @@ namespace Fcg.Data.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "Name", "Password", "Role" },
-                values: new object[] { 1, "admin@user.com", "admin", "User@1234", 0 });
+                values: new object[] { 1, "admin@user.com", "admin", "$2a$12$4v7rJsBJeZZ.Zivh/iTab.SGuxcNFWOOzKqZ34scDghOlmw3ImV3S", 0 });
 
             migrationBuilder.InsertData(
                 table: "Promotions",

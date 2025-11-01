@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Fcg.Data.Migrations
 {
     [DbContext(typeof(FcgDbContext))]
-    [Migration("20251021010454_v3")]
-    partial class v3
+    [Migration("20251101171446_v1")]
+    partial class v1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
