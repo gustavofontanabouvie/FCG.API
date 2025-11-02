@@ -32,8 +32,8 @@ public class GameRepository : IGameRepository
     {
         return await _dbContext.Games
             .AsNoTracking()
-            .Include(g => g.Promotions)
-            .Where(g => g.Promotions.Any())
+            .Include(g => g.Promotions.Where(p => p.StartDate <= DateTime.Now && p.EndDate >= DateTime.Now))
+            .Where(g => g.Promotions.Any(p => p.StartDate <= DateTime.Now && p.EndDate >= DateTime.Now))
             .ToListAsync(cancellationToken);
     }
 
