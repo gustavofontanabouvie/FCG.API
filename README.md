@@ -2,7 +2,7 @@
 
 ## 📋 Sobre o Projeto
 
-FCG.API é uma API RESTful desenvolvida em .NET 8.0 para gerenciamento de um catálogo de jogos com sistema de promoções. A aplicação permite o cadastro de usuários, autenticação, gerenciamento de jogos e suas promoções, oferecendo uma solução completa para plataformas de distribuição digital de jogos.
+FCG.API é uma API RESTful desenvolvida em .NET 8.0 para gerenciamento de um catálogo de jogos com sistema de promoções. Esse projeto foi elaborado pela FIAP como a primeira atividade avaliativa da Pós-Graduação Arquitetura de sistemas .NET, esse projeto servirá como base para as futuras etapas. A aplicação permite o cadastro de usuários, autenticação, gerenciamento de jogos e suas promoções, oferecendo uma solução completa para plataformas de distribuição digital de jogos.
 
 ### Objetivos
 
@@ -25,6 +25,7 @@ FCG.API é uma API RESTful desenvolvida em .NET 8.0 para gerenciamento de um cat
 - **Validação**: FluentValidation
 - **Criptografia**: BCrypt.Net
 - **Logging**: Serilog
+- **Testes de carga**: JMeter
 
 ## 📁 Estrutura do Projeto
 
@@ -153,9 +154,7 @@ docker-compose up --build
 ```
 
 A aplicação estará disponível em:
-- **API**: `http://localhost:8080`
 - **Swagger**: `http://localhost:8080/swagger`
-- **Adminer** (Gerenciador de BD): `http://localhost:8081`
 
 Para parar os containers:
 
@@ -183,13 +182,22 @@ dotnet test --collect:"XPlat Code Coverage"
 dotnet test Fcg.Tests/Fcg.Tests.csproj
 ```
 
-## 📖 Documentação da API
+## 🧪 Testes de carga
+- O objetivo principal foi identificar gargalos de performance e verificar a estabilidade da API ao ser submetida a uma carga constante de 300 usuários simultâneos por um período de 5 minutos (300 segundos).
+- Os testes foram feitos utilizando Apache JMeter 5.6.3
+  
+### Foram analisados três tipos distintos de gargalo:
+- **Leitura de I/O (Um GET simples)**
+- **Carga de CPU (Um POST /login que exige hashing de senha)**
+- **Escrita de I/O (Um POST que realiza uma transação SELECT+INSERT no banco)**
 
-A API utiliza Swagger para documentação interativa. Após iniciar a aplicação, acesse:
+| Label (Endpoint) | Tipo de Operação | # Samples (Total Req) | Average (ms) | Max (ms) | Throughput (Req/sec) | Error % |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `GET /api/Game/with-promotion` | Leitura de I/O | 1.803.680 | 48 | 206 | 6010.2/seg | **0.00%** |
+| `POST /api/Auth/login` | Carga de CPU | 9.042 | 10.027 | 23.581 | 29.4/seg | **0.00%** |
+| `POST /api/Promotion` | Escrita de I/O | 83.943 | 1.067 | 3.074 | 279.1/seg | *3.96%* |
 
-```
-https://localhost:5001/swagger
-```
+> **Nota sobre os Resultados do `POST /api/Promotion`:** A taxa de erro de 3.96% reportada pelo JMeter refere-se exclusivamente a respostas **`HTTP 409 Conflict`**. Isso não representa uma falha da API, mas sim um **sucesso da lógica de negócio**, que (corretamente) impediu a criação de promoções com nomes duplicados gerados aleatoriamente pelo teste de carga. A estabilidade real da API (falhas `5xx`) foi de **0.00%**.
 
 ### Endpoints Principais
 
@@ -465,62 +473,11 @@ curl -X GET "http://localhost:8080/api/Game/1" \
   -H "Authorization: Bearer {seu-token}"
 ```
 
-## 🤝 Contribuindo
-
-Contribuições são sempre bem-vindas! Para contribuir:
-
-1. Faça um Fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
-3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
-4. Push para a branch (`git push origin feature/MinhaFeature`)
-5. Abra um Pull Request
-
-### Padrões de Código
-
-- Siga as convenções de código C#/.NET
-- Escreva testes para novas funcionalidades
-- Mantenha a cobertura de testes
-- Documente funções públicas com XML comments
-- Use FluentValidation para validações
-- Siga os princípios SOLID
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
 ## 👨‍💻 Autor
 
 **Gustavo Fontana Bouvie**
 
 - GitHub: [@gustavofontanabouvie](https://github.com/gustavofontanabouvie)
-
-## 📞 Suporte
-
-Se você tiver alguma dúvida ou problema, por favor:
-
-1. Verifique a [documentação do Swagger](http://localhost:8080/swagger)
-2. Consulte os exemplos neste README
-3. Abra uma [issue](https://github.com/gustavofontanabouvie/FCG.API/issues) no GitHub
-
-## 🗺️ Roadmap
-
-- [ ] Implementar sistema de compra de jogos
-- [ ] Adicionar suporte a imagens/thumbnails de jogos
-- [ ] Implementar sistema de avaliações e reviews
-- [ ] Adicionar paginação nos endpoints de listagem
-- [ ] Implementar cache com Redis
-- [ ] Adicionar suporte a múltiplas moedas
-- [ ] Criar sistema de wishlist
-- [ ] Implementar notificações de promoções
-
-## 📚 Recursos Adicionais
-
-- [Documentação do .NET](https://docs.microsoft.com/dotnet/)
-- [Entity Framework Core](https://docs.microsoft.com/ef/core/)
-- [ASP.NET Core](https://docs.microsoft.com/aspnet/core/)
-- [PostgreSQL](https://www.postgresql.org/docs/)
-- [Docker](https://docs.docker.com/)
-- [JWT.io](https://jwt.io/)
 
 ---
 
