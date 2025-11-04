@@ -28,14 +28,18 @@ public class GameRepository : IGameRepository
         return game;
     }
 
+
     public async Task<IEnumerable<Game>> GetAllGamesWithPromotion(CancellationToken cancellationToken)
     {
+        var now = DateTime.UtcNow;
+
         return await _dbContext.Games
             .AsNoTracking()
-            .Include(g => g.Promotions.Where(p => p.StartDate <= DateTime.Now && p.EndDate >= DateTime.Now))
-            .Where(g => g.Promotions.Any(p => p.StartDate <= DateTime.Now && p.EndDate >= DateTime.Now))
+            .Include(g => g.Promotions.Where(p => p.StartDate <= now && p.EndDate >= now))
+            .Where(g => g.Promotions.Any(p => p.StartDate <= now && p.EndDate >= now))
             .ToListAsync(cancellationToken);
     }
+
 
     public async Task<Game?> GetGameById(int id, CancellationToken cancellationToken)
     {
