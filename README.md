@@ -123,6 +123,7 @@ As migrações são aplicadas automaticamente na inicialização da aplicação,
 cd FCG.API
 dotnet ef database update
 ```
+**O projeto conta com um login administrador padrão, e-mail: "admin@user.com" e senha: "User@1234"**
 
 ## 🏃 Executando a Aplicação
 
