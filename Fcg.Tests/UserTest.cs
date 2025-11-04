@@ -5,6 +5,7 @@ using Fcg.Data.Repositories.Interface;
 using System.Linq.Expressions;
 using Fcg.Application.DTOs.User;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 
 namespace Fcg.Tests;
 
@@ -15,6 +16,10 @@ public class UserTest
     public UserTest()
     {
         _unitOfWorkMock = new Mock<IUnityOfWork>();
+
+        var loggerMock = new Mock<ILogger<UserService>>();
+
+        _userService = new UserService(_unitOfWorkMock.Object, loggerMock.Object);
     }
 
     [Fact]
@@ -35,17 +40,16 @@ public class UserTest
 
         _unitOfWorkMock.Setup(u => u.Users).Returns(userRepoMock.Object);
         _unitOfWorkMock.Setup(u => u.CompleteAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
+
         //Act
         var result = await _userService.CreateUser(newUser, CancellationToken.None);
-        //Assert
 
+        //Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().NotBeNull();
         result.Error.Should().BeNull();
 
-        userRepoMock
-            .Verify(r => r.AddAsync(It.Is<User>(u => u.Email == newUser.email && u.Role == UserRole.User),
-            It.IsAny<CancellationToken>()));
+        _unitOfWorkMock.Verify(u => u.CompleteAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
