@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Fcg.Data.Migrations
 {
     [DbContext(typeof(FcgDbContext))]
-    [Migration("20251101184346_PendingChanges")]
-    partial class PendingChanges
+    [Migration("20251104001339_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,7 +58,7 @@ namespace Fcg.Data.Migrations
                             Genre = "Aventura",
                             Name = "Jogo teste",
                             Price = 99.99m,
-                            ReleaseDate = new DateTime(2025, 10, 10, 0, 0, 0, 0, DateTimeKind.Utc)
+                            ReleaseDate = new DateTime(2025, 10, 10, 3, 0, 0, 0, DateTimeKind.Utc)
                         });
                 });
 
@@ -100,11 +100,11 @@ namespace Fcg.Data.Migrations
                         {
                             Id = 1,
                             DiscountPercentage = 10m,
-                            EndDate = new DateTime(2025, 10, 13, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2025, 10, 13, 3, 0, 0, 0, DateTimeKind.Utc),
                             GameId = 1,
                             IsActive = true,
                             Name = "Promoção dia das crianças",
-                            StartDate = new DateTime(2025, 10, 10, 0, 0, 0, 0, DateTimeKind.Utc)
+                            StartDate = new DateTime(2025, 10, 10, 3, 0, 0, 0, DateTimeKind.Utc)
                         });
                 });
 
